@@ -78,7 +78,7 @@ let p=false;
     <div className="App">
       <video autoPlay ref={inputVideoRef} />
       <canvas ref={canvasRef} width={1280} height={720} />
-      <img ref={imageRef} alt="no frame" src={background}/>
+      {/* <img ref={imageRef} alt="no frame" src={background}/> */}
     </div>
   );
 }

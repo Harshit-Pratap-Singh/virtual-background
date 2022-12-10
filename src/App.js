@@ -8,17 +8,18 @@ function App() {
   const canvasRef = useRef();
   const contextRef = useRef();
   const imageRef = useRef();
-let p=false;
+// let p=false;
   useEffect(() => {
     contextRef.current = canvasRef.current.getContext("2d");
 
     const sendToMediaPipe = async () => {
+      // console.log("sendTpmedia");
       if (!inputVideoRef.current.videoWidth) {
         console.log(inputVideoRef.current.videoWidth);
         requestAnimationFrame(sendToMediaPipe);
       } else {
         await selfieSegmentation.send({ image: inputVideoRef.current });
-        requestAnimationFrame(sendToMediaPipe);
+        requestAnimationFrame( sendToMediaPipe);
       }
     };
 
@@ -34,16 +35,16 @@ let p=false;
     const constraints = {
       video: { width: { min: 1280 }, height: { min: 720 } },
     };
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    navigator.mediaDevices.getUserMedia(constraints).then( (stream) => {
       inputVideoRef.current.srcObject = stream;
       sendToMediaPipe();
     });
 
-    selfieSegmentation.onResults(onResults);
+     selfieSegmentation.onResults(onResults);
   }, []);
 
-  const onResults = (results) => {
-    // console.log(background);
+  const onResults = async(results) => {
+    // console.log("background");
     // if (!p) imageRef.current.src = results.image;
     // p=true
     contextRef.current.save();
@@ -58,15 +59,16 @@ let p=false;
     // contextRef.current.fillStyle = "rgba(0,0,0,0)";
     // contextRef.current.filter = "blur(10px)";
 
-    const image =new Image();
-    image.src=background;
+    const image = new Image();
+    image.src=await background;
+    // console.log(typeof imageRef.current.src);
     contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
     // contextRef.current.fillRect( 0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // // Only overwrite missing pixels.
     contextRef.current.globalCompositeOperation = "destination-atop"  ;
 
-    contextRef.current.filter = "none";
+    // contextRef.current.filter = "none";
     // contextRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     // contextRef.current.filter = "none";
     contextRef.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -76,9 +78,9 @@ let p=false;
 
   return (
     <div className="App">
-      <video autoPlay ref={inputVideoRef} />
+      <video autoPlay ref={inputVideoRef} style={{position:"absolute",zIndex:-1}}/>
       <canvas ref={canvasRef} width={1280} height={720} />
-      {/* <img ref={imageRef} alt="no frame" src={background}/> */}
+      <img ref={imageRef} alt="no frame" src={background} style={{display:"none"}}/>
     </div>
   );
 }

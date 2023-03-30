@@ -8,10 +8,11 @@ function App() {
   const canvasRef = useRef();
   const contextRef = useRef();
   const imageRef = useRef();
+  const videoRef = useRef();
+
 // let p=false;
   useEffect(() => {
     contextRef.current = canvasRef.current.getContext("2d");
-
     const sendToMediaPipe = async () => {
       // console.log("sendTpmedia");
       if (!inputVideoRef.current.videoWidth) {
@@ -41,6 +42,8 @@ function App() {
     });
 
      selfieSegmentation.onResults(onResults);
+    videoRef.current.srcObject=canvasRef.current.captureStream(30);
+
   }, []);
 
   const onResults = async(results) => {
@@ -81,6 +84,7 @@ function App() {
       <video autoPlay ref={inputVideoRef} style={{position:"absolute",zIndex:-1}}/>
       <canvas ref={canvasRef} width={1280} height={720} />
       <img ref={imageRef} alt="no frame" src={background} style={{display:"none"}}/>
+      <video ref={videoRef} autoPlay/>
     </div>
   );
 }
